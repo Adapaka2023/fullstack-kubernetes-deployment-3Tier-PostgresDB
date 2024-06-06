@@ -152,7 +152,7 @@ data "aws_security_group" "selected" {
     tags = {
       "Name" = "MyEKS"
     }
-
+    
     depends_on = [
       aws_iam_role_policy_attachment.AmazonEKSClusterPolicy,
       aws_iam_role_policy_attachment.AmazonEKSServicePolicy,
@@ -169,13 +169,17 @@ data "aws_security_group" "selected" {
     instance_types  = ["t2.small"]
 
     remote_access {
-      ec2_ssh_key               = "provisioner"
+      ec2_ssh_key               = "account2"
       source_security_group_ids = [data.aws_security_group.selected.id]
     }
 
     labels = {
       env = "dev"
     }
+
+    tags = {
+		  Name = "worker-node"
+	  }
 
     scaling_config {
       desired_size = 2
@@ -186,7 +190,7 @@ data "aws_security_group" "selected" {
     update_config {
       max_unavailable = 1
     }
-
+ 
     depends_on = [
       aws_iam_role_policy_attachment.AmazonEKSWorkerNodePolicy,
       aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy,
